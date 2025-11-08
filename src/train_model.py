@@ -81,6 +81,27 @@ def train_and_evaluate(X_train, X_test, y_train, y_test):
 
     return results
 
+def get_trained_models(ticker):
+    """
+    Loads features, prepares data, trains multiple models
+    and returns them. Used by backtesting module.
+    """
+    df = load_features(ticker)
+    X_train, X_test, y_train, y_test = prepare_data(df)
+    results = {}
+
+    #Train models
+    lr = LinearRegression().fit(X_train, y_train)
+    lasso = LassoCV().fit(X_train,y_train)
+    rf = RandomForestRegressor().fit(X_train,y_train)
+
+    results["Linear"] = lr
+    results["LASSO"] = lasso
+    results["RandomForest"] = rf
+
+    return results, (X_train, X_test, y_train, y_test, df.index[-len(y_test):])
+
+
 def main():
     df = load_features("SPY")
     X_train, X_test, y_train, y_test = prepare_data(df)
